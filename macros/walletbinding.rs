@@ -7,7 +7,7 @@ macro_rules! linkWallet {
 
         uint256 status = walletStatuses[wallet0][wallet1];
 
-        if (status == $_newFlag) {   
+        if (status == $_newFlag) {
             // nothing to update
             return (false, false);
         }
@@ -46,6 +46,6 @@ macro_rules! getWalletInList {
 
         $_codeBlock2
 
-        handleWalletBuffer($_codeBlock3)
+        handleWalletBuffer!($_codeBlock3)
     }
 }

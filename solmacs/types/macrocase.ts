@@ -3,7 +3,7 @@ import { Macro } from "./macro"
 export interface MacroCase {
     matchExp: string
     args:     string[]
-    content:  string
+    output:   string
     macros:   Macro[]
 }
 

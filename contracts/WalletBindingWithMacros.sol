@@ -17,25 +17,26 @@ contract WalletBindingWithMacros {
     function addWallet(
         address walletToAdd
     ) external returns (bool /*joined*/, bool /*added*/) {
-        linkWallet!(walletToAdd, FLAG_ADDED!, FLAG_JOINED!, FLAG_EMPTY!);
+        linkWallet!(walletToAdd, FLAG_ADDED!(), FLAG_JOINED!(), FLAG_EMPTY!());
     }
 
     function joinWallet(
         address walletToJoin
     ) external returns (bool joined, bool added) {
-        linkWallet!(walletToAdd, FLAG_JOINED!, FLAG_ADDED!, FLAG_EMPTY!);
+        linkWallet!(walletToAdd, FLAG_JOINED!(), FLAG_ADDED!(), FLAG_EMPTY!());
     }
 
     function listWallets(
         address wallet
     ) external view returns (address[] memory _wallets) {
-        getWalletInList!(wallet,
+        getWalletInList!(
+            wallet,
             returnBalance!(single, wallet),
             ,
-            _wallets = new address[](len);,
+            _wallets = new address[](len),
             _wallets[i] = buffer;,
             true,
-        )
+        );
 
         return _wallets;
     }
@@ -53,9 +54,9 @@ contract WalletBindingWithMacros {
             wallet,
             returnBalance!(single, wallet),
             sumBufferBalance!(),
-            returnBalance!(multiple, wallet)
+            returnBalance!(multiple, wallet),
             false
-        )
+        );
     }
 
     function getListBalanceArray(
@@ -68,7 +69,7 @@ contract WalletBindingWithMacros {
             setBalancesAndWallets!(),
             bufferLoop!(),
             true
-        )
+        );
 
         return (_balances, _wallets);
     }
