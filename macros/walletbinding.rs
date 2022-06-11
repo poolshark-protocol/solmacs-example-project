@@ -13,16 +13,16 @@ macro_rules! linkWallet {
         }
         if (status == $_joinFlag) {
             // delete entry in mapping
-            walletStatuses[wallet0][wallet1] = FLAG_JOINED!;
+            walletStatuses[wallet0][wallet1] = FLAG_JOINED!();
 
-            wallets[_wallet].nextWallet = wallets[msg.sender].nextWallet == address(0)
+            wallets[$_wallet].nextWallet = wallets[msg.sender].nextWallet == address(0)
                 ? msg.sender
                 : wallets[msg.sender].nextWallet;
-            wallets[msg.sender].nextWallet = _wallet;
+            wallets[msg.sender].nextWallet = $_wallet;
             return (true, false);
         }
         if (status == $_addFlag) {
-            walletStatuses[wallet0][wallet1] = FLAG_ADDED!;
+            walletStatuses[wallet0][wallet1] = FLAG_ADDED!();
             return (false, true);
         }
         return (false, false);
@@ -35,7 +35,7 @@ macro_rules! getWalletInList {
             $_codeEndList
         }
 
-        defineLen($_lenFlag)!
+        defineLen!($_lenFlag)
 
         address buffer = $_wallet;
         // get the len of the array

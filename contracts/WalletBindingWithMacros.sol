@@ -66,8 +66,8 @@ contract WalletBindingWithMacros {
             wallet,
             returnBalancesAndWallets!(single),
             ,
-            setBalancesAndWallets!,
-            bufferLoop!,
+            setBalancesAndWallets!(),
+            bufferLoop!(),
             true
         )
 
