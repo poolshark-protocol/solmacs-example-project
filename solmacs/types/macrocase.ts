@@ -1,12 +1,15 @@
 import { Macro } from "./macro"
+import { MacroDef } from "./macrodef"
 
 export interface MacroCase {
-    matchExp: string
-    args:     string[]
-    output:   string
-    macros:   Macro[]
+    matchExp:   string
+    args:       string[]
+    startLine:  number
+    endLine:    number
+    macroDefs:  MacroDef[]
+    output:     string
 }
 
-export function createMacroCase(caseExp: string): MacroCase {
+export function parseMacroCase(caseExp: string): MacroCase {
 
 }

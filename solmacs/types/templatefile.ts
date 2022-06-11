@@ -1,6 +1,6 @@
-import { createMacroDef, MacroDef } from "./macrodef"
+import { createMacroDef, MacroDef, parseMacroDef, ParseMacroDefRet } from "./macrodef"
 import { readFileSync, writeFileSync } from "fs";
-import { MacroFile } from "./macrofile";
+import { MacroFile, parseMacroFile, ParseMacroFileRet } from "./macrofile";
 
 export interface TemplateFile {
     filePath:    string
@@ -15,95 +15,46 @@ export function createTemplateFile(path: string): TemplateFile {
     let contentLines: string[] = content.split("\n");
 
     let macroDefs: MacroDef[] = new Array<MacroDef>();
-    let openParenCount = 0;
-    let macroName;
-    let argsIdx;
-    let args: string[];
+    let macroFiles: MacroFile[] = new Array<MacroFile>();
 
     for(let i=0; i < contentLines.length; i++) {
         let line = contentLines[i];
         let searchIdx = 0;
-        let startIndex; let startLine; let endIndex; let endLine;
 
         /**
          * ( + openParenCount++
          * ) - openParenCount--
          * , - end of arg with openParentCount == 1
-         * 
-         * 
+         *
+         *
          * MYMACRO!();
          * MYMACRO!(arg1, arg2);
-         * MYMACRO!(arg1Macro!(), arg2);
+         * MYMACRO!(arg1Macro!(arg2Macro!()), arg2);
          * MYMACRO!(
-         *     arg1Marco!(
+         *     arg1Macro!(
          *         arg3
          *     ),
          *     arg2
          * );
          * */
 
-        while(true) {
-            let nextOpenParenIdx   = line.indexOf('(', searchIdx);
-            let nextCloseParenIdx = line.indexOf(')', searchIdx);
-            let nextCommaIdx       = line.indexOf(',', searchIdx);
+        while (true) {
 
-            // ready to parse new macro
-            if(openParenCount == 0){
-                argsIdx = line.indexOf('!(', searchIdx);
+            let nextMacroDefIdx  = line.indexOf('!(', searchIdx);
+            let nextMacroFileIdx = line.indexOf('#use "', searchIdx);
 
-                // get macro name
-                let preArgsStr        = line.substring(searchIdx, argsIdx);
-                let macroNameStartIdx = preArgsStr.lastIndexOf(" ") + 1;
-                macroName             = line.substring(macroNameStartIdx, argsIdx);
-                console.log(macroName);
-
-                startLine  = i;
-                startIndex = macroNameStartIdx;
-
-                args = new Array<string>();
-
-                if (argsIdx != -1) {
-                    nextOpenParenIdx = line.indexOf('(', nextOpenParenIdx+1);
-                    if (nextCloseParenIdx < nextOpenParenIdx) {
-                        let _srchIdx = argsIdx;
-                        while (true) {
-                            if (nextCommaIdx == -1 || nextCommaIdx > nextCloseParenIdx) {
-                                break;
-                            }
-                            nextCommaIdx = line.indexOf(',', _srchIdx);
-                            args.push(line.substring(_srchIdx, nextCommaIdx - 1));
-                        }
-                        endLine = i;
-                        endIndex = nextCloseParenIdx;
-                        const macroDef = createMacroDef(macroName, args, startLine, startIndex, endLine, endIndex);
-                        macroDefs.push(macroDef);
-                        break;
-                    }
-                }
-
-                openParenCount = 1;
-                searchIdx = argsIdx + 2;
+            if (nextMacroDefIdx != -1) {
+                let macroDefRet: ParseMacroDefRet = parseMacroDef(contentLines, i, nextMacroDefIdx + 2);
+                macroDefs.push(macroDefRet.macro);
+                i = macroDefRet.lastLine;
+                searchIdx = macroDefRet.lastIdx + 1;
             }
-            else if(openParenCount == 1 && nextCommaIdx != -1 && nextCommaIdx < nextOpenParenIdx){
-                args.push(line.substring(searchIdx, nextCommaIdx - 1));
-            }
-            // in process of parsing macro
-            else {
-                //open = -1 close = -1 -> go to next line
-                //open = -1 close > 0 -> check openParenCount
-                //open > 0 close > 0 check close < open and openParenCount
-                if(nextOpenParenIdx == -1 && nextCloseParenIdx == -1){
-                    // go to next line
-                    break;
-                }
-                if(nextOpenParenIdx == -1 && nextCloseParenIdx > 0){
-                    openParenCount--;
-                }
-
+            else if(nextMacroFileIdx){
+                let fileName = line.substring(line.lastIndexOf('/')+1, line.lastIndexOf('"')-1);
+                let macroFileRet: MacroFile = parseMacroFile('./macros/' + fileName);
+                macroFiles.push(macroFileRet);
             }
         }
-        // if !( is found take everything until)
-        // match name of macro is macro list
     }
 
     return {

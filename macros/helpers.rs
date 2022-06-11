@@ -1,17 +1,23 @@
 #[macro_export]
 
 macro_rules! defineLen {
-    (true) => {uint256 len;}
+    (true) => {
+        uint256 len;
+    }
     (false) => {}
 }
 
 macro_rules! setLen {
-    (one) => {len = 1}
+    (one) => {
+        len = 1
+    }
     () => {}
 }
 
 macro_rules! incrementLen {
-    (true) => {len++}
+    (true) => {
+        len++
+    }
     (false) => {}
 }
 
