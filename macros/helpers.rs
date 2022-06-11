@@ -1,3 +1,5 @@
+#[macro_export]
+
 macro_rules! defineLen {
     (true) => {uint256 len;}
     (false) => {}
@@ -9,7 +11,7 @@ macro_rules! setLen {
 }
 
 macro_rules! incrementLen {
-    (*) => {len++}
+    (true) => {len++}
     (false) => {}
 }
 
@@ -67,7 +69,7 @@ macro_rules! handleWalletBuffer {
         buffer = wallets[buffer].nextWallet;
 
         for (uint256 i; wallets[buffer].nextWallet != aWalletInList; i++) {
-            $_codeBlock3
+            $_codeBlock1
             buffer = wallets[buffer].nextWallet;
         }
     }
