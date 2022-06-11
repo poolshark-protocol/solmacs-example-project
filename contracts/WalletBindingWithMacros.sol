@@ -29,8 +29,7 @@ contract WalletBindingWithMacros {
     function listWallets(
         address wallet
     ) external view returns (address[] memory _wallets) {
-        getWalletInList!(
-            wallet,
+        getWalletInList!(wallet,
             returnBalance!(single, wallet),
             ,
             _wallets = new address[](len);,
