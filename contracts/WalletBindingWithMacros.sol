@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+#use "./macros/consts.rs";
+#use "./macros/helpers.rs";
 #use "./macros/walletbinding.rs";
 
 contract WalletBindingWithMacros {
