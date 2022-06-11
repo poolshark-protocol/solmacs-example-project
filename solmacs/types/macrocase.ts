@@ -10,6 +10,6 @@ export interface MacroCase {
     output:     string
 }
 
-export function parseMacroCase(caseExp: string): MacroCase {
-
+export function parseMacroCase(caseExp: string, args: string[], startLine: number, endLine: number): MacroCase {
+    
 }
