@@ -32,7 +32,7 @@ contract WalletBindingWithMacros {
     ) external view returns (address[] memory _wallets) {
         getWalletInList!(
             wallet,
-            returnBalance!(single, wallet),
+            returnWallets!(single, wallet),
             ,
             _wallets = new address[](len),
             _wallets[i] = buffer;,
@@ -63,6 +63,12 @@ contract WalletBindingWithMacros {
     function getListBalanceArray(
         address wallet
     ) external view returns (uint256[] memory _balances, address[] memory _wallets) {
+        return _getListBalance(wallet);
+    }
+
+    function _getListBalance(
+        address wallet
+    ) internal view returns (uint256[] memory _balances, address[] memory _wallets) {
         getWalletInList!(
             wallet,
             returnBalancesAndWallets!(single),
@@ -71,8 +77,6 @@ contract WalletBindingWithMacros {
             bufferLoop!(),
             true
         );
-
-        return (_balances, _wallets);
     }
 
     function deposit(

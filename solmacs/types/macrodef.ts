@@ -12,18 +12,19 @@ export interface MacroDef {
 }
 
 export interface ParseMacroDefRet {
-    macro: MacroDef
+    macroDef: MacroDef
     lastLine: number
     lastIdx: number
 }
 
-export function parseMacroDef(lines: string[], i: number, startIdx: number): ParseMacroDefRet {
+export function parseMacroDef(lines: string[], i: number, startIdx: number): void {
     let parenDeep = 1;
     let argCount = 0;
 
     let defRet: ParseMacroDefRet;
+    let macroDef: MacroDef;
 
-    let name: string;
+    let name: string = '';
     for (let j=startIdx; j > 0; j--) {
         if (
             lines[i][j] == '(' ||
@@ -35,49 +36,63 @@ export function parseMacroDef(lines: string[], i: number, startIdx: number): Par
         }
         name = name.concat(lines[i][j]);
     }
-    let splitString = name.split("");
-    let reverseArray = splitString.reverse();
-    defRet.macro.name = reverseArray.join("");
+    // console.log(name);
+    // let splitString = name.split("");
+    // let reverseArray = splitString.reverse();
+    // let macroDef = reverseArray.join("");
 
-    console.log(defRet.macro.name);
+    // console.log(defRet.macroDef.name);
 
-    defRet.macro.startLine = i;
-    defRet.macro.startIndex = startIdx;
+    // defRet.macroDef.startLine = i;
+    // defRet.macroDef.startIndex = startIdx;
 
-    for (; i < lines.length; i++) {
-        let line = lines[i];
+    // for (; i < lines.length; i++) {
+    //     let line = lines[i];
 
-        for (let char=startIdx; char < line.length; char++) {
-            // new macro encountered
-            if (line[char-1]+line[char] == '!(') {
-                let macroDef = parseMacroDef(lines, i, char);
-                defRet.macro.macroDefs.push(macroDef.macro);
-            }
-            //
-            else if (line[char] == '(' && line[char-1]+line[char] != '!(') {
-                parenDeep++;
-            }
-            else if (line[char] == ')') {
-                parenDeep--;
-                defRet.lastIdx = char;
-                defRet.lastLine = i;
-                if (parenDeep == 0) {
-                    defRet.macro.endLine = i;
-                    defRet.macro.endIndex = char;
-                    return defRet;
-                }
-            }
-            else if (line[char] == ',') {
-                argCount++;
-            }
-            else if (line[char] != ' ' && line[char] != '\t') {
-                if (defRet.macro.args[argCount] == null) {
-                    defRet.macro.args[argCount] = line[char];
-                }
-                else {
-                    defRet.macro.args[argCount] = defRet.macro.args[argCount]+line[char];
-                }
-            }
-        }
-    }
+    //     for (let char=startIdx; char < line.length; char++) {
+    //         // new macro encountered
+    //         if (line[char-1]+line[char] == '!(') {
+    //             let macroDef = parseMacroDef(lines, i, char);
+    //             defRet.macroDef.macroDefs.push(macroDef.macroDef);
+    //         }
+    //         //
+    //         else if (line[char] == '(' && line[char-1]+line[char] != '!(') {
+    //             parenDeep++;
+    //         }
+    //         else if (line[char] == ')') {
+    //             parenDeep--;
+    //             defRet.lastIdx = char;
+    //             defRet.lastLine = i;
+    //             if (parenDeep == 0) {
+    //                 defRet.macroDef.endLine = i;
+    //                 defRet.macroDef.endIndex = char;
+    //                 return defRet;
+    //             }
+    //         }
+    //         else if (line[char] == ',') {
+    //             argCount++;
+    //         }
+    //         else if (line[char] != ' ' && line[char] != '\t') {
+    //             if (defRet.macroDef.args[argCount] == null) {
+    //                 defRet.macroDef.args[argCount] = line[char];
+    //             }
+    //             else {
+    //                 defRet.macroDef.args[argCount] = defRet.macroDef.args[argCount]+line[char];
+    //             }
+    //         }
+    //     }
+    // }
+    // macroDef = {
+    //     name: name,
+    //     args: [],
+    //     startLine: i,
+    //     startIndex: startIdx,
+    //     endLine: i + 1,
+    //     endIndex: 0,
+    //     macroDefs: []
+    // };
+    // return {
+    //     macroDef: macroDef,
+    //     lastLine: 
+    // }
 }

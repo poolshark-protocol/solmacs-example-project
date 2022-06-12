@@ -1,7 +1,7 @@
 #[macro_export]
 
 macro_rules! linkWallet {
-    ($_wallet, $_newFlag, $_joinFlag, $_addFlag) => {
+    (*, $_wallet, $_newFlag, $_joinFlag, $_addFlag) => {
         address wallet0 = msg.sender > $_wallet ? msg.sender : $_wallet;
         address wallet1 = msg.sender > $_wallet ? $_wallet : msg.sender;
 

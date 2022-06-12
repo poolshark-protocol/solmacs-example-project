@@ -1,5 +1,6 @@
 import { match } from "assert";
 import { start } from "repl";
+import { findClosingBracket, findClosingParenthesis } from "../utils/fileparsing";
 import { MacroCase, parseMacroCase } from "./macrocase"
 
 export interface Macro {
@@ -7,49 +8,17 @@ export interface Macro {
     cases:    MacroCase[]
 }
 
-export function parseMacro(name: string, lines: string[], startLine: number, endLine: number): Macro {
-    let openBracketCount = 0;
-    let caseStartLine;
-    let caseExp: string;
-    let caseArgs: string[];
-    let cases: MacroCase[];
-    for(let lineNumber = startLine; lineNumber <= endLine; lineNumber++){
-        let line: string = lines[lineNumber].replace(' ','');
-        if(line.startsWith('(') && openBracketCount == 0) {
-            openBracketCount = 1;
-            // find the start and end line of the macro case
-            caseArgs = line.substring(1, line.indexOf(')') - 1).split(',');
-            
-            caseStartLine = lineNumber + 1;
-            if(!line.startsWith('()')){
-                if(line.startsWith('($')){
-                    caseExp = '*';
-                }
-                // else there is a matchExp
-                else {
-                    caseExp = caseArgs[0];
-                    caseArgs = caseArgs.slice(1);
-                }
-
-                continue;
-               
-            }
-        }
-        else if(openBracketCount > 0) {
-            while(true){
-                openBracketCount += (line.match(/{/g) || []).length;
-                openBracketCount -= (line.match(/}/g) || []).length;
-                if(openBracketCount == 0){
-                    let caseEndLine = lineNumber - 1;
-                    let macroCase: MacroCase = parseMacroCase(caseExp, caseArgs, caseStartLine, caseEndLine);
-                    cases.push(macroCase);
-                    break;
-                }
-                else{
-                    continue;
-                }
-            }
-        }
+export function parseMacro(name: string, lines: string[], startLine: number, endLine: number, endIndex: number): Macro {
+    let cases: MacroCase[] = new Array<MacroCase>();
+    let lineNumber = startLine;
+    while(lineNumber < endLine){
+        let line = lines[lineNumber];
+        let openIdx = line.indexOf('(');
+        let argsClosing = findClosingParenthesis(lines, lineNumber, openIdx + 1);
+        let caseClosing = findClosingBracket(lines, lineNumber + 1, 0);
+        let argsStr = line.substring(openIdx + 1, argsClosing.endIndex - 1);
+        console.log(argsStr);
+        lineNumber = caseClosing.endLine + 1;
     }
     return {
         name: name,

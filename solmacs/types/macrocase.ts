@@ -19,4 +19,7 @@ export function parseMacroCase(caseExp: string, args: string[], startLine: numbe
     //
     // read through each line and find macroDefs
     // output will be the final string after all inner macros have been resolved
+    for(let lineNumber = startLine; lineNumber < endLine; lineNumber++){
+        
+    }
 }

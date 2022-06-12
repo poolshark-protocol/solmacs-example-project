@@ -1,4 +1,6 @@
 import { readFileSync } from "fs";
+import { exit } from "process";
+import { findClosingBracket } from "../utils/fileparsing";
 import { Macro, parseMacro } from "./macro"
 import { parseMacroDef, ParseMacroDefRet } from "./macrodef";
 
@@ -17,36 +19,20 @@ export function parseMacroFile(path: string): MacroFile {
 
     for(let i=0; i < contentLines.length; i++) {
         let line = contentLines[i];
-        let searchIdx = 0;
-
-        /**
-         * ( + openParenCount++
-         * ) - openParenCount--
-         * , - end of arg with openParentCount == 1
-         *
-         *
-         * MYMACRO!();
-         * MYMACRO!(arg1, arg2);
-         * MYMACRO!(arg1Macro!(arg2Macro!()), arg2);
-         * MYMACRO!(
-         *     arg1Macro!(
-         *         arg3
-         *     ),
-         *     arg2
-         * );
-         * */
-        let macroStr    = 'macro_rules! ';
+        let searchIdx        = 0;
+        let macroStr         = 'macro_rules! ';
         let nextMacroIdx     = line.indexOf(macroStr, searchIdx);
 
         if(nextMacroIdx != -1){
             let startLine = i+1;
-            while(contentLines[i] != '}'){
-                i++;
-            }
-            let endLine = i-1;
+            console.log(startLine+1);
+            let closing = findClosingBracket(contentLines, startLine, 0);
+            let endLine = closing.endLine-1;
+            let endIndex = closing.endIndex;
             let macroName = line.substring(nextMacroIdx + macroStr.length, line.length - 1).replace(' ', '').replace('{', '');
             console.log(macroName);
-            let macroRet: Macro = parseMacro(macroName, contentLines, startLine, endLine);
+            console.log(endLine+1);
+            let macroRet: Macro = parseMacro(macroName, contentLines, startLine, endLine, endIndex);
             macros.push(macroRet);
         }
     }
