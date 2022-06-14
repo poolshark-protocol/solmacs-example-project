@@ -1,17 +1,22 @@
 # Solmacs
 
-This project demonstrates a simple use case for Solmacs, a macro preprocessor built for use in the Solidity smart contract language.
+This project demonstrates a simple use case for Solmacs, a Rust-style macro preprocessor built for use in the Solidity smart contract language.
+
 
 The project comes with a sample contract, both the original and a template file with macros, and the core Solmacs package to preprocess the macros for code placement.
 
+
 # Template File
 
+
 A Template File will contain your Solidity code as well as some usage of the `!macro_rules` defined in the Macro Files.
+
 
 Usage:
 ```
 macroName!(arg1, arg2)
 ```
+
 
 Here is an example in this project:
 ```
