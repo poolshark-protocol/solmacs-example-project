@@ -6,7 +6,7 @@ The project comes with a sample contract, both the original and a template file 
 
 # Template File
 
-A Template File will contain your Solidity code as well as some usage of the !macro_rules in the macro files defined in the `macros` folder.
+A Template File will contain your Solidity code as well as some usage of the `!macro_rules` defined in the Macro Files.
 
 Usage:
 ```
