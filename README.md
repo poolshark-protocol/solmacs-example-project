@@ -1,46 +1,56 @@
-# Advanced Sample Hardhat Project
+# Solmacs
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+This project demonstrates a simple use case for Solmacs, a macro preprocessor built for use in the Solidity smart contract language.
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+The project comes with a sample contract, both the original and a template file with macros, and the core Solmacs package to preprocess the macros for code placement.
 
-Try running some of the following tasks:
+# Template File
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
+A Template File will contain your Solidity code as well as some usage of the !macro_rules in the macro files defined in the `macros` folder.
+
+Usage:
+```
+macroName!(arg1, arg2)
 ```
 
-# Etherscan verification
+Here is an example in this project:
+```
+    function listWallets(
+        address wallet
+    ) external view returns (address[] memory _wallets) {
+        getWalletInList!(
+            wallet,
+            returnBalance!(single, wallet),
+            ,
+            _wallets = new address[](len),
+            _wallets[i] = buffer;,
+            true,
+        );
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
+        return _wallets;
+    }
+``` 
 
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
+Notice here that you have also define macros as args for other macros.
 
-```shell
-hardhat run --network ropsten scripts/deploy.ts
+# Macro File
+
+Macro files consist of rules that are defined to be reused through Template Files as well as Macro Files.
+
+```
+macro_rules! incrementLen {
+    (true) => {
+        len++
+    }
+    (false) => {}
+}
 ```
 
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
-
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
+By passing `true` to this macro rule the output will be:
 ```
+len++
+```
+where as passing `false` will return an empty string
 
-# Performance optimizations
+`true` and `false` here represent the Match Expression, which is used to decide which Macro Case(s) to match on.
 
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
